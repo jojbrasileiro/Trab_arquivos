@@ -10,6 +10,11 @@ void select_from(char *nomeArquivoEntrada) {
     //Faz a leitura do cabaçalho
     LeCabecalho(ArquivoBinario, &cabecalho);
 
+    if (cabecalho.status == '0') {
+        printf("Falha no processamento do arquivo.\n");
+        exit(0);
+    }
+
     //string para o caso de um campo ser nulo
     char SemDados[] = "SEM DADO";
     Registro registro;

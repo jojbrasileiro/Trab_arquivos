@@ -5,6 +5,7 @@
 
 FILE *lerArquivoCSV(char *nomeArquivo);
 FILE *lerArquivoBinario(char *nomeArquivo);
+FILE *lerEscreverArquivoBinario(char *nomeArquivo);
 void LerCampoVariado(char **Campo, int *tamanhoCampo, FILE *arquivo, char* SemDados);
 void LerCamposVariadosNaoNulos(char **Campo, int tamanho, FILE *arquivo);
 void LeCabecalho(FILE *ArquivoBinario, Cabecalho *cabecalho);

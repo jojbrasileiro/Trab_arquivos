@@ -20,6 +20,15 @@ FILE *lerArquivoBinario(char *nomeArquivo) {
     return arquivo;
 }
 
+FILE *lerEscreverArquivoBinario(char *nomeArquivo) {
+    FILE *arquivo = fopen(nomeArquivo, "rb+");
+    if (arquivo == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        exit(0);
+    }
+    return arquivo;
+}
+
 //função dedicada a fazer a leitura de campos de tamanho variado no caso de seu tamanho ser nulo, 
 //ja colocando a string "SEM DADO" no campo
 void LerCampoVariado(char **Campo, int *tamanhoCampo, FILE *arquivo, char* SemDados) {

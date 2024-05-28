@@ -2,6 +2,7 @@
 #include "select_from.h"
 #include "select_where.h"
 #include "create_index.h"
+#include "insert_into.h"
 
 int main() {
     int opcao;
@@ -35,8 +36,13 @@ int main() {
             scanf("%s", nomeArquivoSaida);
 
             create_index(nomeArquivoEntrada, nomeArquivoSaida);
-        break;
+            break;
+        case 6:
+            scanf("%s", nomeArquivoEntrada);
+            scanf("%s", nomeArquivoSaida);
 
+            insert_into(nomeArquivoEntrada, nomeArquivoSaida);
+            break;
         default:
             printf("Opcao invalida.\n");
             break;

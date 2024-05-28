@@ -60,7 +60,7 @@ void ImprimeCabecalho(Cabecalho cabecalho) {
     printf("Topo: %ld\n", cabecalho.topo);
     printf("Próximo Byte Offset: %ld\n", cabecalho.proxByteOffset);
     printf("Número de Registros no Arquivo: %d\n", cabecalho.nroRegArq);
-    printf("Número de Registros Removidos: %d\n", cabecalho.nroRegRem);
+    printf("Número de Registros Removidos: %d\n\n", cabecalho.nroRegRem);
 }
 
 //função que imprime o registro completo para fins de correção 
@@ -75,7 +75,7 @@ void ImprimeRegistro(Registro registro) {
     printf("Tamanho da Nacionalidade: %d\n", registro.tamNacionalidade);
     printf("Nacionalidade: %s\n", registro.nacionalidade);
     printf("Tamanho do Nome do Clube: %d\n", registro.tamNomeClube);
-    printf("Nome do Clube: %s\n", registro.nomeClube);
+    printf("Nome do Clube: %s\n\n", registro.nomeClube);
 }
 
 //função que escreve o registro no arquivo

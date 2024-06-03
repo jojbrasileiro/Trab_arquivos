@@ -97,3 +97,10 @@ void EscreveRegistroIndice(FILE *arquivo, int ID, int byteoffset){
     fwrite(&ID, sizeof(int), 1, arquivo);
     fwrite(&byteoffset, sizeof(int), 1, arquivo);
 }
+
+void RemoveRegistro(FILE *arquivo,int tam_reg,Cabecalho Cabecalho){
+    char removido = '1';
+    fwrite(&removido, sizeof(char), 1, arquivo);
+    fwrite(&tam_reg, sizeof(int), 1, arquivo);
+    fwrite(&Cabecalho.topo, sizeof(long), 1, arquivo);
+}

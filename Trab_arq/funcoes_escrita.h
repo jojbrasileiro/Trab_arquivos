@@ -11,5 +11,5 @@ void ImprimeCabecalho(Cabecalho cabecalho);
 void ImprimeRegistro(Registro registro);
 void EscreveRegistro(FILE *arquivo, Registro registro);
 void EscreveRegistroIndice(FILE *arquivo, int ID, int byteoffset);
-
+void RemoveRegistro(FILE *arquivo,int tam_reg,Cabecalho Cabecalho);
 #endif

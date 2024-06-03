@@ -2,7 +2,9 @@
 #include "select_from.h"
 #include "select_where.h"
 #include "create_index.h"
+#include "delete_from.h"
 #include "insert_into.h"
+
 
 int main() {
     int opcao;
@@ -36,6 +38,12 @@ int main() {
             scanf("%s", nomeArquivoSaida);
 
             create_index(nomeArquivoEntrada, nomeArquivoSaida);
+            break;
+        case 5:
+            scanf("%s", nomeArquivoEntrada);
+            scanf("%s", nomeArquivoSaida);
+
+            delete_from(nomeArquivoEntrada, nomeArquivoSaida);
             break;
         case 6:
             scanf("%s", nomeArquivoEntrada);

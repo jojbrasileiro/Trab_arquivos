@@ -2,6 +2,7 @@
 #define FUNCOES_LEITURA_H
 
 #include "estruturas.h"
+#include "ordenacao_busca.h"
 
 FILE *lerArquivoCSV(char *nomeArquivo);
 FILE *lerArquivoBinario(char *nomeArquivo);
@@ -11,5 +12,7 @@ void LerCamposVariadosNaoNulos(char **Campo, int tamanho, FILE *arquivo);
 void LeCabecalho(FILE *ArquivoBinario, Cabecalho *cabecalho);
 Registro Ler_registros(FILE *ArquivoBinario, char *SemDados);
 Registro Ler_registros_ID(FILE *ArquivoBinario);
+Registro Ler_registros_debug(FILE *ArquivoBinario, char *SemDados);
+int verifica_id_Repetido(int *lista_ids, int lista_tam, int id_procurado);
 
 #endif

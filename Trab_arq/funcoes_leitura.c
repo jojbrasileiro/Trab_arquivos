@@ -83,6 +83,25 @@ Registro Ler_registros(FILE *ArquivoBinario, char *SemDados) {
 
         return registro;
 }
+//função que le os registros no arquivo binario, apenas para correção
+Registro Ler_registros_debug(FILE *ArquivoBinario, char *SemDados) {
+    Registro registro;
+
+    fread(&registro.tamanhoRegistro, sizeof(int), 1, ArquivoBinario);
+    fread(&registro.Prox, sizeof(long), 1, ArquivoBinario);
+    fread(&registro.id, sizeof(int), 1, ArquivoBinario);
+    fread(&registro.idade, sizeof(int), 1, ArquivoBinario);
+
+    LerCampoVariado(&registro.nomeJogador, &registro.tamNomeJog, ArquivoBinario, SemDados);
+    LerCampoVariado(&registro.nacionalidade, &registro.tamNacionalidade, ArquivoBinario, SemDados);
+    LerCampoVariado(&registro.nomeClube, &registro.tamNomeClube, ArquivoBinario, SemDados);
+        
+
+    return registro;
+}
+
+
+
 
 Registro Ler_registros_ID(FILE *ArquivoBinario) {
     Registro registro;
@@ -92,12 +111,25 @@ Registro Ler_registros_ID(FILE *ArquivoBinario) {
         fread(&registro.tamanhoRegistro, sizeof(int), 1, ArquivoBinario);
         fseek(ArquivoBinario, (registro.tamanhoRegistro - 5) * sizeof(char), SEEK_CUR);
     } else {
+        registro.id = -1;
+        // printf("Valor inicial %d\n", registro.id);
         fread(&registro.tamanhoRegistro, sizeof(int), 1, ArquivoBinario);
         fread(&registro.Prox, sizeof(long), 1, ArquivoBinario);
         fread(&registro.id, sizeof(int), 1, ArquivoBinario);
+        // printf("Valor Encontrado %d\n", registro.id);
+
         fseek(ArquivoBinario, (registro.tamanhoRegistro - 17) * sizeof(char), SEEK_CUR);
         }
 
     return registro;
 }
 
+// Função para procurar um ID no arquivo de índice
+int verifica_id_Repetido(int* lista_ids,int lista_tam, int id_procurado) {
+    // printf("procurando %d na lista %d\n", id_procurado, lista_tam);
+    selection_sort(lista_ids, lista_tam);    
+    if (busca_binaria(lista_ids, lista_tam, id_procurado)){
+        return 1;
+    }
+        return 0;
+}

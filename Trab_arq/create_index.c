@@ -15,12 +15,16 @@ void create_index_sem_leitura(char *nomeArquivoEntrada, char *nomeArquivoSaida){
     //Faz a leitura do cabaçalho
     LeCabecalho(ArquivoBinario, &cabecalho);
 
+    if(cabecalho.status == '0'){
+        printf("Falha no processamento do arquivo.\n");
+        exit(0);
+    }
+
     //string para o caso de um campo ser nulo
     Registro registro;
     int byteoffset;
+
     //itera por todos os registros do arquivo
-    int ids_list[10000];
-    memset(ids_list, 0, sizeof(10000));
     for (int i = 0; i < (cabecalho.nroRegArq + cabecalho.nroRegRem); i++)
     {
         registro.id = -1;      
@@ -37,15 +41,7 @@ void create_index_sem_leitura(char *nomeArquivoEntrada, char *nomeArquivoSaida){
         if (registro.removido == '0')
         {
             // printf("ByteOffSet %d\n", byteoffset);
-            if(i >0){
-                if (verifica_id_Repetido(ids_list, i, registro.id) == 1)
-                    {
-                        printf("Falha no processamento do arquivo.");
-                        return;
-                    }
-            }
             EscreveRegistroIndice(ArquivoIndice, registro.id, byteoffset);
-            ids_list[i] = registro.id;
         }
         
     }

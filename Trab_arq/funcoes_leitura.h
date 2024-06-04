@@ -3,7 +3,10 @@
 
 #include "estruturas.h"
 #include "ordenacao_busca.h"
+#include "funcoes_operacoes.h"
 
+int le_registro_stdin(Registro *registro);
+Registro Ler_registros_removidos(FILE *ArquivoBinario, char *SemDados);
 FILE *lerArquivoCSV(char *nomeArquivo);
 FILE *lerArquivoBinario(char *nomeArquivo);
 FILE *lerEscreverArquivoBinario(char *nomeArquivo);

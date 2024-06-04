@@ -3,6 +3,7 @@
 
 #include "estruturas.h"
 
+void EscreveLixo(FILE *arquivo, int num);
 void ImprimeRegistroFunc2(Registro registro);
 void EscreveCabecalho(FILE *arquivo, Cabecalho cabecalho);
 FILE *criarArquivoIndice(char *nomeArquivo);

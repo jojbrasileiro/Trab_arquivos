@@ -3,6 +3,7 @@
 
 #include "estruturas.h"
 
+int VerificaNulo(char **Campo, char *string);
 int AlocaCamposVariados(char **Campo, char *token);
 void binarioNaTela(char *nomeArquivoBinario);
 void processarCampoInt(Registro *registro, char *token, int *campo);

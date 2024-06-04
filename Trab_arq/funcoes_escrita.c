@@ -1,5 +1,12 @@
 #include "funcoes_escrita.h"
 
+//função que completa a diferença de tamanho dos arquivos com lixo
+void EscreveLixo(FILE *arquivo, int num){
+    for(int i = 0; i < num; i++){
+        fwrite("$", sizeof(char), 1, arquivo);
+    }
+}
+
 //função que imprime de acordo com as especificações da funcionalidade 2
 void ImprimeRegistroFunc2(Registro registro) {
     printf("Nome do Jogador: %s\n", registro.nomeJogador);

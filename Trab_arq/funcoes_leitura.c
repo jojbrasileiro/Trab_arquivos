@@ -1,5 +1,51 @@
 #include "funcoes_leitura.h"
 
+//função que faz a leitura dos registros a serem inseridos
+int le_registro_stdin(Registro *registro) {
+    char string[30];
+    char str[5];
+
+    scanf("%d", &registro->id);
+
+    scanf("%s", str);
+
+    if (strcmp(str, "NULO") == 0) {
+        registro->idade = -1;
+    } else {
+        registro->idade = atoi(str);
+    }
+
+    memset(str, '\0', sizeof(str));
+
+    scan_quote_string(string);
+    registro->tamNomeJog = VerificaNulo(&registro->nomeJogador, string);
+
+    scan_quote_string(string);
+    registro->tamNacionalidade = VerificaNulo(&registro->nacionalidade, string);
+
+    scan_quote_string(string);
+    registro->tamNomeClube = VerificaNulo(&registro->nomeClube, string);
+
+    return 33 + registro->tamNacionalidade + registro->tamNomeClube + registro->tamNomeJog;
+}
+
+//função que faz a leitura dos campos sem considerar se o arquivo esta removido
+Registro Ler_registros_removidos(FILE *ArquivoBinario, char *SemDados) {
+    Registro registro;
+
+        fread(&registro.removido, sizeof(char), 1, ArquivoBinario);
+        fread(&registro.tamanhoRegistro, sizeof(int), 1, ArquivoBinario);
+        fread(&registro.Prox, sizeof(long), 1, ArquivoBinario);
+        fread(&registro.id, sizeof(int), 1, ArquivoBinario);
+        fread(&registro.idade, sizeof(int), 1, ArquivoBinario);
+
+        LerCampoVariado(&registro.nomeJogador, &registro.tamNomeJog, ArquivoBinario, SemDados);
+        LerCampoVariado(&registro.nacionalidade, &registro.tamNacionalidade, ArquivoBinario, SemDados);
+        LerCampoVariado(&registro.nomeClube, &registro.tamNomeClube, ArquivoBinario, SemDados);
+
+        return registro;
+}
+
 //inicia a leitura do csv e verifica se o arquivo foi aberto corretamente
 FILE *lerArquivoCSV(char *nomeArquivo) {
     FILE *arquivo = fopen(nomeArquivo, "r");

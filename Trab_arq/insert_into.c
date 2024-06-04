@@ -1,75 +1,10 @@
 #include "insert_into.h"
 
-Registro Ler_registros_removidos(FILE *ArquivoBinario, char *SemDados) {
-    Registro registro;
-
-        fread(&registro.removido, sizeof(char), 1, ArquivoBinario);
-        fread(&registro.tamanhoRegistro, sizeof(int), 1, ArquivoBinario);
-        fread(&registro.Prox, sizeof(long), 1, ArquivoBinario);
-        fread(&registro.id, sizeof(int), 1, ArquivoBinario);
-        fread(&registro.idade, sizeof(int), 1, ArquivoBinario);
-
-        LerCampoVariado(&registro.nomeJogador, &registro.tamNomeJog, ArquivoBinario, SemDados);
-        LerCampoVariado(&registro.nacionalidade, &registro.tamNacionalidade, ArquivoBinario, SemDados);
-        LerCampoVariado(&registro.nomeClube, &registro.tamNomeClube, ArquivoBinario, SemDados);
-
-        return registro;
-}
-
-void EscreveLixo(FILE *arquivo, int num){
-    for(int i = 0; i < num; i++){
-        fwrite("$", sizeof(char), 1, arquivo);
-    }
-}
-
-int VerificaNulo(char **Campo, char *string) {
-    int tamanho;
-    if (strcmp(string, "NULO") == 0) {
-        tamanho = 0;
-        *Campo = (char *)malloc(sizeof(char));
-        (*Campo)[0] = '\0';
-    } else {
-        tamanho = strlen(string);
-        *Campo = (char *)malloc((tamanho + 1) * sizeof(char));
-        strncpy(*Campo, string, tamanho);
-        (*Campo)[tamanho] = '\0';
-    }
-    return tamanho;
-}
-
-int le_registro_stdin(Registro *registro) {
-    char string[30];
-    char str[5];
-
-    scanf("%d", &registro->id);
-
-    scanf("%s", str);
-
-    if (strcmp(str, "NULO") == 0) {
-        registro->idade = -1;
-    } else {
-        registro->idade = atoi(str);
-    }
-
-    memset(str, '\0', sizeof(str));
-
-    scan_quote_string(string);
-    registro->tamNomeJog = VerificaNulo(&registro->nomeJogador, string);
-
-    scan_quote_string(string);
-    registro->tamNacionalidade = VerificaNulo(&registro->nacionalidade, string);
-
-    scan_quote_string(string);
-    registro->tamNomeClube = VerificaNulo(&registro->nomeClube, string);
-
-    return 33 + registro->tamNacionalidade + registro->tamNomeClube + registro->tamNomeJog;
-}
-
-
 int insert_into(char *nomeArquivoEntrada, char *nomeArquivoIndice){
     int numEscolhas;
     scanf("%d", &numEscolhas);
 
+    //incia registro que sera escrito
     Registro registro = {
     .removido = '0',
     .Prox = -1,
@@ -83,48 +18,62 @@ int insert_into(char *nomeArquivoEntrada, char *nomeArquivoIndice){
     .nomeClube = NULL
     };
 
+    //abre arquivo binario no modo rb+
     FILE *ArquivoBinario = lerEscreverArquivoBinario(nomeArquivoEntrada);
 
     while (numEscolhas > 0)
     {
+        //recebe o tamanho do registro
         int tamanho = le_registro_stdin(&registro);
 
+        //atualiza o tamanho
         registro.tamanhoRegistro = tamanho;
 
         Cabecalho cabecalho;
 
         fseek(ArquivoBinario, 0, SEEK_SET);
 
+        //faz a leitura do cabeçalho
         LeCabecalho(ArquivoBinario, &cabecalho);
 
+        //recebe o primeiro registro removido da lista pelo topo do cabeçalho
         long proxByteOffset = cabecalho.topo;
+        //mantem o registro do ultimo registro vizitado para o caso de ser necessario atualizar a lista
         long antigo_proxByteOffset = proxByteOffset;
 
         Registro registro_removido;
+        //mantem o controle do caso de haver ou não espaço para inserir o registro
         int espaco_suficiente = 0;
 
         for (int i = 0; i < cabecalho.nroRegRem; i++) {
-
+            //move o cursor para o registro removido
             fseek(ArquivoBinario, proxByteOffset * sizeof(char), SEEK_SET);
 
+            //faz a leitura do registro removido
             registro_removido = Ler_registros_removidos(ArquivoBinario, "SEM DADO");
 
+            //verifica se o tamanho do registro removido atual comporta nossa inserção
             if (registro_removido.tamanhoRegistro >= tamanho) {
-
+                //verifica se é a primeira interação para o caso de ter que atualizar o cabeçalho ou outro registro da lista
                 if(i == 0){
                     cabecalho.topo = registro_removido.Prox;
                 }else{
+                    //volta o cursor para o registro anterior e atualiza o prox removido
                     fseek(ArquivoBinario, (antigo_proxByteOffset + 5) * sizeof(char), SEEK_SET);
                     fwrite(&registro_removido.Prox, sizeof(long), 1, ArquivoBinario);
                 }
 
+                //move o cursor para o registro
                 fseek(ArquivoBinario, proxByteOffset * sizeof(char), SEEK_SET);
 
+                //atualiza o tamanho do registro novo com o espaço recebido
                 registro.tamanhoRegistro += registro_removido.tamanhoRegistro - tamanho;
 
+                //escreve o registro e adiciona o lixo
                 EscreveRegistro(ArquivoBinario, registro);
                 EscreveLixo(ArquivoBinario, registro_removido.tamanhoRegistro - tamanho);
 
+                //atualiza o cabeçalho
                 cabecalho.nroRegArq += 1;
                 cabecalho.nroRegRem -= 1;
                 EscreveCabecalho(ArquivoBinario, cabecalho);
@@ -138,13 +87,14 @@ int insert_into(char *nomeArquivoEntrada, char *nomeArquivoIndice){
                 break;
             }
 
+            //atualiza novos bytesoffsets
             antigo_proxByteOffset = proxByteOffset;
             proxByteOffset = registro_removido.Prox;
 
             zera_registro(&registro_removido);
         }
 
-
+        //caso onde não ha espaço no arquivo
         if(espaco_suficiente == 0){
                 fseek(ArquivoBinario, 0, SEEK_END);
                 EscreveRegistro(ArquivoBinario, registro);
@@ -161,5 +111,6 @@ int insert_into(char *nomeArquivoEntrada, char *nomeArquivoIndice){
     fclose(ArquivoBinario);
 
     binarioNaTela(nomeArquivoEntrada);
+    //roda a funcionalidade 4 para gerar o indice
     create_index (nomeArquivoEntrada, nomeArquivoIndice);
 }

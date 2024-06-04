@@ -1,5 +1,21 @@
 #include "funcoes_operacoes.h"
 
+//função que verifica se a string é igual a "NULO"
+int VerificaNulo(char **Campo, char *string) {
+    int tamanho;
+    if (strcmp(string, "NULO") == 0) {
+        tamanho = 0;
+        *Campo = (char *)malloc(sizeof(char));
+        (*Campo)[0] = '\0';
+    } else {
+        tamanho = strlen(string);
+        *Campo = (char *)malloc((tamanho + 1) * sizeof(char));
+        strncpy(*Campo, string, tamanho);
+        (*Campo)[tamanho] = '\0';
+    }
+    return tamanho;
+}
+
 //função que verifica se o token esta vazio, e caso negativo aloca o tamanho necessario para armazenar o valor
 int AlocaCamposVariados(char **Campo, char *token){
     int tamanho;

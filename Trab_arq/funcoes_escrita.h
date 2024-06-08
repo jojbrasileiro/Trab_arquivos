@@ -4,13 +4,13 @@
 #include "estruturas.h"
 
 void EscreveLixo(FILE *arquivo, int num);
-void ImprimeRegistroFunc2(Registro registro);
 void EscreveCabecalho(FILE *arquivo, Cabecalho cabecalho);
-FILE *criarArquivoIndice(char *nomeArquivo);
-FILE *criarArquivoBinario(char *nomeArquivo);
-void ImprimeCabecalho(Cabecalho cabecalho);
-void ImprimeRegistro(Registro registro);
+FILE *CriarArquivoIndice(char *nomeArquivo);
+FILE *CriarArquivoBinario(char *nomeArquivo);
 void EscreveRegistro(FILE *arquivo, Registro registro);
 void EscreveRegistroIndice(FILE *arquivo, int ID, int byteoffset);
-void RemoveRegistro(FILE *arquivo,int tam_reg,Cabecalho Cabecalho);
+void RemoveRegistro(FILE *arquivo, int tam, long int byteOffSet);
+void InserirEspacoDisponivel(EspacoDisponivel **lista, int tamanho, long offset);
+void LiberarListaEspacoDisponivel(EspacoDisponivel *lista);
+void AtualizaCabecalho(FILE *ArquivoBinario, Cabecalho cabecalho, long int byteOffSet, int remocoes);
 #endif

@@ -7,7 +7,8 @@
 #include <ctype.h>
 
 // Definição da estrutura de cabeçalho
-typedef struct {
+typedef struct
+{
     char status;
     long topo;
     long proxByteOffset;
@@ -16,7 +17,8 @@ typedef struct {
 } Cabecalho;
 
 // Definição da estrutura de registros
-typedef struct {
+typedef struct
+{
     char removido;
     int tamanhoRegistro;
     long Prox;
@@ -29,5 +31,18 @@ typedef struct {
     int tamNomeClube;
     char *nomeClube;
 } Registro;
+
+typedef struct
+{
+    int id;
+    int byteOffset;
+} Index;
+
+typedef struct EspacoDisponivel
+{
+    int tamanho;
+    long offset;
+    struct EspacoDisponivel *prox;
+} EspacoDisponivel;
 
 #endif

@@ -1,131 +1,169 @@
 #include "delete_from.h"
 
-void atualiza_topo(FILE* ArquivoBinario,Cabecalho cabecalho,long int byteOffSet){
-    cabecalho.topo = byteOffSet;
-    cabecalho.nroRegArq--;
-    cabecalho.nroRegRem++;
-    EscreveCabecalho(ArquivoBinario, cabecalho);
-}
+int delete_from(char *nomeArquivoEntrada, char *nomeArquivoIndice)
+{
 
-int delete_from(char *nomeArquivoEntrada, char *nomeArquivoIndice){
-    
-    //string que armazena o nome do campo selecionado
+    // string que armazena o nome do campo selecionado
     char campo[20];
 
-    //numero de buscas e campos por busca
+    // numero de buscas e campos por busca
     int numEscolhas;
     int numCampos;
+    int buscaId = 0;
+    int remocoes = 0;
+    long int prox_inicial = -1;
     scanf("%d", &numEscolhas);
 
-    // create_index_sem_leitura(nomeArquivoEntrada, nomeArquivoIndice);
     // registro padrão inicializado, a ideia é que os campos só sejam comparados se diferentes desses valores, uma vez
     // são valores impossiveis de serem assumidos
     Registro registro = {
-    .id = -1,
-    .idade = -1,
-    .tamNomeJog = 0,
-    .nomeJogador = NULL,
-    .tamNacionalidade = 0,
-    .nacionalidade = NULL,
-    .tamNomeClube = 0,
-    .nomeClube = NULL
-    };
+        .id = -1,
+        .idade = -1,
+        .tamNomeJog = 0,
+        .nomeJogador = NULL,
+        .tamNacionalidade = 0,
+        .nacionalidade = NULL,
+        .tamNomeClube = 0,
+        .nomeClube = NULL};
 
-    //contador de buscas
+    // contador de buscas
     int count = 1;
 
-    //arquivo inicializado
-    FILE *ArquivoBinario = lerEscreverArquivoBinario(nomeArquivoEntrada);
+    // arquivo inicializado
+    FILE *ArquivoBinario = LerEscreverArquivoBinario(nomeArquivoEntrada);
+    EspacoDisponivel *lista = NULL;
+    // inicializa o cabeçalho
+    Cabecalho cabecalho;
+    LeCabecalho(ArquivoBinario, &cabecalho);
 
-    //looping pelo numero de ebuscas do usuario
+    if (cabecalho.nroRegRem != 0)
+    {
+
+        fseek(ArquivoBinario, cabecalho.topo, SEEK_SET);
+        Registro registroRemovido;
+        for (int i = 0; i < (cabecalho.nroRegRem); i++)
+        {
+
+            registroRemovido = LerRegistrosRemovidos(ArquivoBinario, "SEM DADO");
+
+            long byteoffsetRemovido = ftell(ArquivoBinario);
+            // verifica se o registro esta removido
+            if (registroRemovido.removido == '1')
+            {
+                long int prox_byteoffset = registroRemovido.Prox;
+                // ImprimeRegistro(registroRemovido);
+                InserirEspacoDisponivel(&lista, registroRemovido.tamanhoRegistro, (byteoffsetRemovido - registroRemovido.tamanhoRegistro));
+                fseek(ArquivoBinario, prox_byteoffset, SEEK_SET);
+            }
+        }
+        // fseek(ArquivoBinario, 25, SEEK_SET);
+    }
+    // looping pelo numero de ebuscas do usuario
     while (numEscolhas > 0)
     {
         scanf("%d", &numCampos);
-
-        //for pelo numero de campos indicados pelo usuario
+        buscaId = 0;
+        // for pelo numero de campos indicados pelo usuario
         for (int i = 0; i < numCampos; i++)
         {
-            //le o campo
+            // le o campo
             scanf("%s", campo);
-            
-            //determina qual o campo e faz e faz o armazenamento apropriado no registro padrão
+            // Define se a busca utilizada sera por id ou por campo
+            if (strcmp(campo, "id") == 0)
+            {
+                buscaId = 1;
+                create_index_sem_leitura(nomeArquivoEntrada, nomeArquivoIndice);
+                ArquivoBinario = LerEscreverArquivoBinario(nomeArquivoEntrada);
+            }
+            // determina qual o campo e faz e faz o armazenamento apropriado no registro padrão
             determina_campo(campo, &registro);
 
-            //zera a string campo
+            // zera a string campo
             memset(campo, 0, sizeof(campo));
         }
 
-        //print da busca
-        printf("Busca %d\n\n", count++);
-
-        //inicializa o cabeçalho
-        Cabecalho cabecalho;
-
-        //garante que o arquivo inicia no inicio em todas as iterações
+        // garante que o arquivo inicia no inicio em todas as iterações
         fseek(ArquivoBinario, 0, SEEK_SET);
 
-        //le o cabeçalho
+        // le o cabeçalho
         LeCabecalho(ArquivoBinario, &cabecalho);
-
-        //inicializa o registro
+        // inicializa o registro
         Registro registroAtual;
 
-        //contador para saber se algum registro contem as informações desejadas
+        // contador para saber se algum registro contem as informações desejadas
         int registros_corretos = 0;
-        ImprimeCabecalho(cabecalho);
-
-        //itera pelo arquivo comparando registro a registro com os campos indicados
-        for (int i = 0; i < (cabecalho.nroRegArq + cabecalho.nroRegRem); i++)
+        // Itera pelo arquivo indice procurando um id correspondente
+        if (buscaId)
         {
-            //faz a leitura do registro no arquivo
-            long int byteoffset = ftell(ArquivoBinario);
-            registroAtual =  Ler_registros(ArquivoBinario, "SEM DADO");
-            // caso o registro não esteja removido
-            if(registroAtual.removido == '0'){
-                //compara os registros
-                if(compararRegistros(&registro, &registroAtual) == 1){
-                    //caso corresponda a busca é printado
-                    ImprimeRegistro(registroAtual);
-                    int tam_reg = registroAtual.tamanhoRegistro;
-                    printf("Tamnho do arquivo %d\n", tam_reg);
-                    // volta o ponteiro para a posição inicial da leitura do registro
-                    // printf("Posição do byte %ld\n",byteoffset);
-                    // printf("Posição antes fseek %ld\n", ftell(ArquivoBinario));
-
-                    //Atualiza o topo com valor do byteOffSet do registro removido
-                    atualiza_topo(ArquivoBinario, cabecalho, byteoffset);
-                    fseek(ArquivoBinario, 0, SEEK_SET);
-                    LeCabecalho(ArquivoBinario, &cabecalho);
-                    ImprimeCabecalho(cabecalho);
-                    
-                    //Remove lógicamente o registro
-                    fseek(ArquivoBinario, byteoffset, SEEK_SET);
-                    printf("Posição depois fseek %ld\n", ftell(ArquivoBinario));
-                    RemoveRegistro(ArquivoBinario,tam_reg,cabecalho);
-                    
-                    // Avança para o pŕoximo
-                    printf("Posição depois da escrita %ld\n", ftell(ArquivoBinario));
-                    fseek(ArquivoBinario, (tam_reg - 13) * sizeof(char), SEEK_CUR);
-                    printf("Posição depois do seek da escrita %ld\n", ftell(ArquivoBinario));
-                    registros_corretos++;
-                }
+            // Verifica se o id existe no arquivo de indice
+            int byteBuscado = BuscaId(nomeArquivoIndice, registro.id);
+            if (byteBuscado != -1)
+            {
+                fseek(ArquivoBinario, byteBuscado, SEEK_SET);
+                registroAtual = LerRegistros(ArquivoBinario, "SEM DADO");
+                // Atualiza lista de lógicamente removidos
+                InserirEspacoDisponivel(&lista, registroAtual.tamanhoRegistro, byteBuscado);
+                fseek(ArquivoBinario, (byteBuscado + registroAtual.tamanhoRegistro) * sizeof(char), SEEK_SET);
+                registros_corretos++;
+                remocoes++;
             }
         }
-
-        //caso não hajam registros correspondentes exibe a mensagem de erro
-        if(registros_corretos == 0){
-            printf("Registro inexistente.\n\n");
+        // itera pelo arquivo comparando registro a registro com os campos indicados
+        else
+        {
+            for (int i = 0; i < (cabecalho.nroRegArq + cabecalho.nroRegRem); i++)
+            {
+                // faz a leitura do registro no arquivo
+                int long byteOffSet = ftell(ArquivoBinario);
+                registroAtual = LerRegistros(ArquivoBinario, "SEM DADO");
+                // caso o registro não esteja removido
+                if (registroAtual.removido == '0')
+                {
+                    // compara os registros
+                    if (compararRegistros(&registro, &registroAtual) == 1)
+                    {
+                        InserirEspacoDisponivel(&lista, registroAtual.tamanhoRegistro, byteOffSet);
+                        // Avança para o pŕoximo
+                        fseek(ArquivoBinario, (byteOffSet + registroAtual.tamanhoRegistro) * sizeof(char), SEEK_SET);
+                        registros_corretos++;
+                        remocoes++;
+                    }
+                }
+                zera_registro(&registroAtual);
+            }
         }
-
-        //registro padrão é zerado para uma nova busca
         zera_registro(&registro);
 
         numEscolhas--;
     }
-    
-    //arquivo é fechado
+
+    // Remove os registros salvo na lista para remoção
+    EspacoDisponivel *atual = lista;
+    Registro reg;
+    while (atual != NULL)
+    {
+        int tam = atual->tamanho;
+        EspacoDisponivel *prox = atual->prox;
+        fseek(ArquivoBinario, atual->offset, SEEK_SET);
+        if (prox != NULL)
+        {
+            RemoveRegistro(ArquivoBinario, tam, prox->offset);
+        }
+        else
+        {
+            RemoveRegistro(ArquivoBinario, tam, (long)-1);
+        }
+        atual = atual->prox;
+    }
+    // printf("Foram removidos %d\n", remocoes);
+    AtualizaCabecalho(ArquivoBinario, cabecalho, lista->offset, remocoes);
+    // #####################
+
+    // arquivo é fechado
     fclose(ArquivoBinario);
-    
+
     binarioNaTela(nomeArquivoEntrada);
-    create_index (nomeArquivoEntrada, nomeArquivoIndice);
+    create_index(nomeArquivoEntrada, nomeArquivoIndice);
+    // Da free no malloc da lista
+    LiberarListaEspacoDisponivel(lista);
 }

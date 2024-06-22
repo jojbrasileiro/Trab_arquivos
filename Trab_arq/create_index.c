@@ -5,7 +5,6 @@ void create_index(char *nomeArquivoEntrada, char *nomeArquivoSaida)
     create_index_sem_leitura(nomeArquivoEntrada, nomeArquivoSaida);
     binarioNaTela(nomeArquivoSaida);
 }
-
 void create_index_sem_leitura(char *nomeArquivoEntrada, char *nomeArquivoSaida)
 {
     // arquivo inicializado

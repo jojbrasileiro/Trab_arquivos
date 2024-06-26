@@ -225,22 +225,6 @@ void ImprimeRegistro(Registro registro)
     printf("Nome do Clube: %s\n\n", registro.nomeClube);
 }
 
-// função que escreve o registro no arquivo
-void EscreveRegistro(FILE *arquivo, Registro registro)
-{
-    fwrite(&registro.removido, sizeof(char), 1, arquivo);
-    fwrite(&registro.tamanhoRegistro, sizeof(int), 1, arquivo);
-    fwrite(&registro.Prox, sizeof(long), 1, arquivo);
-    fwrite(&registro.id, sizeof(int), 1, arquivo);
-    fwrite(&registro.idade, sizeof(int), 1, arquivo);
-    fwrite(&registro.tamNomeJog, sizeof(int), 1, arquivo);
-    fwrite(registro.nomeJogador, sizeof(char), registro.tamNomeJog, arquivo);
-    fwrite(&registro.tamNacionalidade, sizeof(int), 1, arquivo);
-    fwrite(registro.nacionalidade, sizeof(char), registro.tamNacionalidade, arquivo);
-    fwrite(&registro.tamNomeClube, sizeof(int), 1, arquivo);
-    fwrite(registro.nomeClube, sizeof(char), registro.tamNomeClube, arquivo);
-}
-
 // função que imprime o cabeçalho para fins de correção
 void ImprimeCabecalho(Cabecalho cabecalho)
 {

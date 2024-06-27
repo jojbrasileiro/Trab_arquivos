@@ -5,6 +5,8 @@
 #include "delete_from.h"
 #include "insert_into.h"
 #include "b_tree.h"
+#include "select_from_arvoreB.h"
+#include "select_where_arvoreB.h"
 
 /*
 João Brasileiro Moreira da Silva 13672957
@@ -63,6 +65,18 @@ int main()
         scanf("%s", nomeArquivoSaida);
 
         create_indexB(nomeArquivoEntrada, nomeArquivoSaida);
+        break;
+    case 8:
+        scanf("%s", nomeArquivoEntrada);
+        scanf("%s", nomeArquivoSaida);
+
+        select_from_arvoreB(nomeArquivoEntrada, nomeArquivoSaida);
+        break;
+    case 9:
+        scanf("%s", nomeArquivoEntrada);
+        scanf("%s", nomeArquivoSaida);
+
+        select_where_arvoreB(nomeArquivoEntrada, nomeArquivoSaida);
         break;
     case 10:
         scanf("%s", nomeArquivoEntrada);

@@ -417,6 +417,37 @@ void insere(FILE *arquivo, Header *header, int chave, long byteOffSet)
     contador++;
 }
 
+long busca_TreeB(FILE* ArquivoIndex, int noAtual, int id) {
+    long prAssociado = -1;
+    
+    while (noAtual != -1) {
+        BTreeNode no = leNo(ArquivoIndex, noAtual);
+        int encontrado = 0;
+
+        int i = 0;
+        for (i = 0; i < no.nroChaves; i++) {
+            int chaveAtual = (i == 0) ? no.c1 : (i == 1) ? no.c2 : no.c3;
+            long prAtual = (i == 0) ? no.pr1 : (i == 1) ? no.pr2 : no.pr3;
+            
+            if (id < chaveAtual) {
+                noAtual = (i == 0) ? no.p1 : (i == 1) ? no.p2 : no.p3;
+                encontrado = 1;
+                break;
+            } else if (id == chaveAtual) {
+                prAssociado = prAtual;
+                return prAssociado;
+            }
+        }
+
+        if (!encontrado) {
+            noAtual = (i == 1) ? no.p2 : (i == 2) ? no.p3 : no.p4;
+        }
+    }
+
+    return -1;
+}
+
+
 void create_indexB(char *nomeArquivoEntrada, char *nomeArquivoSaida)
 {
 

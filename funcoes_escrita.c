@@ -63,6 +63,22 @@ FILE *CriarArquivoIndiceB(char *nomeArquivo)
     return arquivo;
 }
 
+FILE *LerArquivoIndiceB(char *nomeArquivo)
+{
+    FILE *arquivo = fopen(nomeArquivo, "rb");
+    if (arquivo == NULL)
+    {
+        printf("Falha no processamento do arquivo.\n");
+        exit(1);
+    }
+
+    char status = '1';
+
+    fwrite(&status, sizeof(char), 1, arquivo);
+
+    return arquivo;
+}
+
 // função que inicia o arquivo binario no modo escrita binaria e ja escreve o cabacalho
 FILE *CriarArquivoBinario(char *nomeArquivo)
 {

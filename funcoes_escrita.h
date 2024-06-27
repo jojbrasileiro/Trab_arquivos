@@ -8,6 +8,7 @@ void EscreveCabecalho(FILE *arquivo, Cabecalho cabecalho);
 FILE *CriarArquivoIndice(char *nomeArquivo);
 FILE *CriarArquivoBinario(char *nomeArquivo);
 FILE *CriarArquivoIndiceB(char *nomeArquivo);
+FILE *LerArquivoIndiceB(char *nomeArquivo);
 void EscreveRegistro(FILE *arquivo, Registro registro);
 void EscreveRegistroIndice(FILE *arquivo, int ID, int byteoffset);
 void RemoveRegistro(FILE *arquivo, int tam, long int byteOffSet);

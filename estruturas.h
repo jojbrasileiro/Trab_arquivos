@@ -59,6 +59,7 @@ typedef struct
     int p2;
     int p3;
     int p4;
+    int RRNAtual;
 } BTreeNode;
 
 // Estrutura do cabeçalho do arquivo de índice
@@ -70,4 +71,13 @@ typedef struct
     int nroChaves;
     char lixo[47];
 } Header;
+
+typedef struct
+{
+    int chave;
+    long byteOffSet;
+    // int RRNEsquerda;
+    int RRNDireita;
+    int AlturaNo;
+} dados;
 #endif

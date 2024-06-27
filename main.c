@@ -6,6 +6,11 @@
 #include "insert_into.h"
 #include "b_tree.h"
 
+/*
+João Brasileiro Moreira da Silva 13672957
+Igor Lovatto Resende 10439099
+*/
+
 int main()
 {
     int opcao;
@@ -57,7 +62,13 @@ int main()
         scanf("%s", nomeArquivoEntrada);
         scanf("%s", nomeArquivoSaida);
 
-        create_indexB_sem_leitura(nomeArquivoEntrada, nomeArquivoSaida);
+        create_indexB(nomeArquivoEntrada, nomeArquivoSaida);
+        break;
+    case 10:
+        scanf("%s", nomeArquivoEntrada);
+        scanf("%s", nomeArquivoSaida);
+
+        insert_intoB(nomeArquivoEntrada, nomeArquivoSaida);
         break;
     default:
         printf("Opcao invalida.\n");

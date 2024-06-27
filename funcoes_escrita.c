@@ -69,12 +69,7 @@ FILE *LerArquivoIndiceB(char *nomeArquivo)
     if (arquivo == NULL)
     {
         printf("Falha no processamento do arquivo.\n");
-        exit(1);
     }
-
-    char status = '1';
-
-    fwrite(&status, sizeof(char), 1, arquivo);
 
     return arquivo;
 }

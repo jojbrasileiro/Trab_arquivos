@@ -11,15 +11,5 @@
 #define TAMANHO_NO 60
 #define TAMANHO_CABECALHO 60
 
-// Estrutura do nó da árvore-B
-// typedef struct {
-//     int alturaNo;
-//     int nroChaves;
-//     long long chaves[MAX_CHAVES];
-//     int refs[MAX_CHAVES];
-//     int ponteiros[MAX_PONTEIROS];
-// } BTreeNode;
-
-// Estrutura do nó da árvore-B
-void create_indexB_sem_leitura(char *nomeArquivoEntrada, char *nomeArquivoSaida);
+void create_indexB(char *nomeArquivoEntrada, char *nomeArquivoSaida);
 #endif

@@ -140,7 +140,7 @@ dados split(BTreeNode *esquerda, dados dadosInsercao, BTreeNode *direita)
     int keys[4];
     long prs[4];
     int p[5];
-
+    // Combina as 3 chaves com a chave para inserção
     keys[0] = esquerda->c1;
     keys[1] = esquerda->c2;
     keys[2] = esquerda->c3;
@@ -157,6 +157,7 @@ dados split(BTreeNode *esquerda, dados dadosInsercao, BTreeNode *direita)
     p[3] = esquerda->p4;
     p[4] = dadosInsercao.RRNDireita;
 
+    // Ordena as chaves para encontrar o melhor nó para promoção
     for (int i = 3; i > 0; i--)
     {
         if (keys[i] < keys[i - 1])
@@ -176,13 +177,14 @@ dados split(BTreeNode *esquerda, dados dadosInsercao, BTreeNode *direita)
             break;
         }
     }
-
+    // define a chave a ser promovida
     dados promove = {
         .chave = keys[1],
         .byteOffSet = prs[1],
         .AlturaNo = esquerda->alturaNo,
         .RRNDireita = direita->RRNAtual};
 
+    // cria o maior filho
     direita->c1 = keys[2];
     direita->pr1 = prs[2];
     direita->c2 = keys[3];
@@ -195,7 +197,7 @@ dados split(BTreeNode *esquerda, dados dadosInsercao, BTreeNode *direita)
     direita->p4 = -1;
     direita->nroChaves = 2;
     direita->alturaNo = esquerda->alturaNo;
-
+    // cria o menor filho
     esquerda->c1 = keys[0];
     esquerda->pr1 = prs[0];
     esquerda->c2 = -1;
@@ -217,10 +219,9 @@ dados insereNaoCheio(FILE *arquivo, Header *header, BTreeNode *no_atual, dados d
         .chave = -1,
         .byteOffSet = -1,
         .RRNDireita = -1,
-        // .RRNEsquerda = -1,
         .AlturaNo = 0};
     BTreeNode prox_no;
-    // imprimirNo(no_atual);
+    // Caso nó seja uma folha
     if (no_atual->alturaNo == 0)
     {
         // SPLIT EM UM NO FOLHA
@@ -237,6 +238,7 @@ dados insereNaoCheio(FILE *arquivo, Header *header, BTreeNode *no_atual, dados d
             header->proxRRN++;
             return dadosPromoveChave;
         }
+        // Caso tenha espaço realiza a inserção
         else
         {
             if (dadosInsercao.chave < no_atual->c1)
@@ -270,11 +272,11 @@ dados insereNaoCheio(FILE *arquivo, Header *header, BTreeNode *no_atual, dados d
             dadosPromoveChave.chave = -1;
             dadosPromoveChave.byteOffSet = -1;
             dadosPromoveChave.RRNDireita = -1;
-            // dadosPromoveChave.RRNEsquerda = -1;
             dadosPromoveChave.AlturaNo = 0;
             return dadosPromoveChave;
         }
     }
+    // Caso nó não seja uma folha
     if (dadosInsercao.chave < no_atual->c1)
     {
         prox_no = leNo(arquivo, no_atual->p1);
@@ -287,7 +289,6 @@ dados insereNaoCheio(FILE *arquivo, Header *header, BTreeNode *no_atual, dados d
     }
     else if (dadosInsercao.chave < no_atual->c3 || no_atual->c3 == -1)
     {
-        // printf("Numero chaves %d\n", no_atual->nroChaves);
         prox_no = leNo(arquivo, no_atual->p3);
         prox_no.RRNAtual = no_atual->p3;
     }
@@ -308,7 +309,7 @@ dados insereNaoCheio(FILE *arquivo, Header *header, BTreeNode *no_atual, dados d
     no_atual->alturaNo = dadosPromoveChave.AlturaNo;
     escreveNo(arquivo, no_atual, no_atual->RRNAtual);
     BTreeNode node = leNo(arquivo, no_atual->RRNAtual);
-
+    // Caso pai esteja cheio
     if (no_atual->nroChaves == MAX_CHAVES)
     {
         BTreeNode filho;
@@ -335,7 +336,6 @@ dados insereNaoCheio(FILE *arquivo, Header *header, BTreeNode *no_atual, dados d
         no_atual->p4 = no_atual->p3;
         no_atual->p3 = no_atual->p2;
         no_atual->p2 = dadosPromoveChave.RRNDireita;
-        // no_atual->p1 = dadosPromoveChave.RRNEsquerda;
     }
     else if (dadosPromoveChave.chave < no_atual->c2 || no_atual->c2 == -1)
     {
@@ -347,24 +347,20 @@ dados insereNaoCheio(FILE *arquivo, Header *header, BTreeNode *no_atual, dados d
 
         no_atual->p4 = no_atual->p3;
         no_atual->p3 = dadosPromoveChave.RRNDireita;
-        // no_atual->p2 = dadosPromoveChave.RRNEsquerda;
     }
     else
     {
         no_atual->c3 = dadosPromoveChave.chave;
         no_atual->pr3 = dadosPromoveChave.byteOffSet;
-        // no_atual->p3 = dadosPromoveChave.RRNEsquerda;
         no_atual->p4 = dadosPromoveChave.RRNDireita;
     }
     no_atual->nroChaves++;
     escreveNo(arquivo, no_atual, no_atual->RRNAtual);
     node = leNo(arquivo, no_atual->RRNAtual);
-    // imprimirNo(&node);
 
     dadosPromoveChave.chave = -1;
     dadosPromoveChave.byteOffSet = -1;
     dadosPromoveChave.RRNDireita = -1;
-    // dadosPromoveChave.RRNEsquerda = -1;
     dadosPromoveChave.AlturaNo = no_atual->alturaNo;
     return dadosPromoveChave;
 }
@@ -380,8 +376,6 @@ void insere(FILE *arquivo, Header *header, int chave, long byteOffSet)
         .AlturaNo = 0};
 
     // Caso não exista Raiz cria o nó raiz
-    // printf("Iteração %d\n", contador);
-    // printf("%d\n", chave);
     if (header->noRaiz == -1)
     {
         BTreeNode raiz;
@@ -411,11 +405,9 @@ void insere(FILE *arquivo, Header *header, int chave, long byteOffSet)
             novaRaiz.p2 = dadosInsercao.RRNDireita;
             novaRaiz.alturaNo = dadosInsercao.AlturaNo + 1;
             novaRaiz.RRNAtual = header->proxRRN;
-            // printf("RRN atual da nova raiz %d\n", novaRaiz.RRNAtual);
             header->noRaiz = header->proxRRN;
             escreveNo(arquivo, &novaRaiz, header->proxRRN);
             BTreeNode node = leNo(arquivo, header->proxRRN);
-            // imprimirNo(&node);
             header->proxRRN++;
         }
     }
@@ -425,14 +417,12 @@ void insere(FILE *arquivo, Header *header, int chave, long byteOffSet)
     contador++;
 }
 
-void create_indexB_sem_leitura(char *nomeArquivoEntrada, char *nomeArquivoSaida)
+void create_indexB(char *nomeArquivoEntrada, char *nomeArquivoSaida)
 {
 
-    // Print_BTree("files/indice1.bin");
     // arquivo inicializado
     FILE *ArquivoBinario = LerArquivoBinario(nomeArquivoEntrada);
     FILE *ArquivoIndice = CriarArquivoIndiceB(nomeArquivoSaida);
-    // FILE *ArquivoIndice = LerArquivoIndiceB(nomeArquivoSaida);
 
     Cabecalho cabecalho;
 
@@ -440,7 +430,6 @@ void create_indexB_sem_leitura(char *nomeArquivoEntrada, char *nomeArquivoSaida)
     inicializaCabecalho(&header);
 
     escreveCabecalhoB(ArquivoIndice, &header);
-    // printf("ByteOffSet após escrever o cabecalho no indice:%ld\n\n", ftell(ArquivoIndice));
     LeCabecalho(ArquivoBinario, &cabecalho);
 
     if (cabecalho.status == '0')
@@ -455,7 +444,6 @@ void create_indexB_sem_leitura(char *nomeArquivoEntrada, char *nomeArquivoSaida)
 
     // itera por todos os registros do arquivo
     for (int i = 0; i < (cabecalho.nroRegArq + cabecalho.nroRegRem); i++)
-    // for (int i = 0; i < 300; i++)
     {
         registro.id = -1;
         byteoffset = ftell(ArquivoBinario);
@@ -468,7 +456,6 @@ void create_indexB_sem_leitura(char *nomeArquivoEntrada, char *nomeArquivoSaida)
         }
         if (registro.removido == '0')
         {
-            // printf("\nIDS: %d\n", registro.id);
             insere(ArquivoIndice, &header, registro.id, byteoffset);
         }
     }
